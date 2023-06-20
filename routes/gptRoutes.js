@@ -2,6 +2,7 @@ const { Configuration, OpenAIApi } = require('openai');
 const router = require('express').Router();
 const Chat = require('../db/chats');
 const auth = require('../middleware/auth');
+const getDIDVideo = require('../d-id/api');
 
 const config = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -23,6 +24,48 @@ const reqOpenAI = async (prompt, model) => {
         console.log(error);
     }
 }
+
+//Receiving user question, saving chat history and sending back answer in response.
+router.post('/video', auth, async (req, res, next) => {
+    try {
+        if (!req.body.input) {
+            throw new Error('input is missing');
+        }
+        let model = (req.body.model == 3.5) ? 'text-davinci-003' : 'text-curie-001';
+
+        const prompt = req.body.input;
+
+        const response = await reqOpenAI(prompt, model);
+
+        let gptRes = response.data.choices[0].text.trim();
+
+        await getDIDVideo(gptRes, req.user._id.toString());
+
+        // const chatMessage = new Chat({
+        //     user_input: req.body.input,
+        //     gpt_answer: gptRes,
+        //     user_id: req.user._id
+        // });
+
+        // await chatMessage.save();
+        
+        return res.status(200).send({success: true});
+
+    } catch (error) {
+        error.status = 400;
+        next(error);
+    }
+});
+
+router.post('/video/webhook', async (req, res, next) => {
+    try {
+        console.log(req.body);
+        res.status(200).end()
+    } catch (error) {
+        error.status = 400;
+        next(error);
+    }
+});
 
 //Receiving user question, saving chat history and sending back answer in response.
 router.post('/', auth, async (req, res, next) => {
