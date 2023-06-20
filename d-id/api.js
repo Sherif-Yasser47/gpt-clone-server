@@ -21,8 +21,7 @@ const getDIDVideo = async (input, user_id) => {
             user_data: user_id
     };
     let response = await axiosInstance.post('/talks', config);
-    console.log(response);
-    return;
+    return response.data.id;
 }   
 
 module.exports = getDIDVideo;

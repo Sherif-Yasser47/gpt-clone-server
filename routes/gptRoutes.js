@@ -39,15 +39,15 @@ router.post('/video', auth, async (req, res, next) => {
 
         let gptRes = response.data.choices[0].text.trim();
 
-        await getDIDVideo(gptRes, req.user._id.toString());
+        let talkId = await getDIDVideo(gptRes, req.user._id.toString());
 
-        // const chatMessage = new Chat({
-        //     user_input: req.body.input,
-        //     gpt_answer: gptRes,
-        //     user_id: req.user._id
-        // });
+        const chatMessage = new Chat({
+            user_input: req.body.input,
+            talk_id: talkId,
+            user_id: req.user._id
+        });
 
-        // await chatMessage.save();
+        await chatMessage.save();
         
         return res.status(200).send({success: true});
 
@@ -59,7 +59,9 @@ router.post('/video', auth, async (req, res, next) => {
 
 router.post('/video/webhook', async (req, res, next) => {
     try {
-        console.log(req.body);
+        const chat = await Chat.findOne({user_id:req.body.user_data, talk_id:req.body.id});
+        chat.video_url = req.body.result_url;
+        await chat.save();
         res.status(200).end()
     } catch (error) {
         error.status = 400;

@@ -7,16 +7,19 @@ const chatSchema = new Schema({
         required: true,
         trim: true,
     },
-    gpt_answer: {
+    video_url: {
         type: String,
-        required: true,
         trim: true,
+    },
+    talk_id: {
+        type: String,
+        trim: true
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
-      }
+    }
 }, {
     timestamps: true
 });
