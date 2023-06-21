@@ -23,7 +23,7 @@ const getDIDVideo = async (user_id, input, type, source_url, voiceRate, audio_ur
             }
         },
         source_url,
-        // source_url: "https://create-images-results.d-id.com/DefaultPresenters/Toman_f_ai/image.jpeg",
+        source_url: "https://create-images-results.d-id.com/DefaultPresenters/Toman_f_ai/image.jpeg",
         webhook: "https://gpt-clone-server.onrender.com/api/gpt/video/webhook",
         user_data: user_id
     };
