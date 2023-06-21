@@ -25,7 +25,6 @@ const reqOpenAI = async (prompt, model) => {
     }
 }
 
-//Receiving user question, saving chat history and sending back answer in response.
 router.post('/video', auth, async (req, res, next) => {
     try {
         if (!req.body.input) {
@@ -39,7 +38,7 @@ router.post('/video', auth, async (req, res, next) => {
 
         let gptRes = response.data.choices[0].text.trim();
 
-        let talkId = await getDIDVideo(gptRes, req.user._id.toString());
+        let talkId = await getDIDVideo(req.user._id.toString(), gptRes);
 
         const chatMessage = new Chat({
             user_input: req.body.input,

@@ -25,6 +25,10 @@ const userSchema = new Schema({
     otp: {
         type: String,
         trim: true,
+    },
+    avatar: {
+        type: String,
+        trim: true
     }
 }, {
     timestamps: true

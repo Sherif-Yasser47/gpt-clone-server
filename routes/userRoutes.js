@@ -1,12 +1,15 @@
 const router = require('express').Router();
-
+const multer = require('multer');
+const sharp = require('sharp');
+const auth = require('../middleware/auth');
 const User = require('../db/users');
 const sendOTPmail = require('../sendGrid/sendGrid');
+const { uploadAudio, uploadImage } = require('../d-id/uploadResources');
 
 router.post('/register', async (req, res, next) => {
     try {
         await User.checkEmail(req.body.email);
-        const user = new User({ ...req.body});
+        const user = new User({ ...req.body });
         let otp = await user.generateOTP();
         await sendOTPmail(req.body.email, otp);
         await user.save();
@@ -42,11 +45,40 @@ router.post('/verify/:id', async (req, res, next) => {
         const user = await User.findById(req.params.id);
         await user.verifyOTP(req.body.otp);
         const token = await user.generateAuthToken();
-        res.send({ status:'verfied', user, token });
+        res.send({ status: 'verfied', user, token });
     } catch (error) {
         error.status = 403;
         next(error);
     }
+});
+
+//User upload profile pic End-Point.
+const upload = multer({
+    limits: {
+        fileSize: 20000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(png)$/i)) {
+            cb(new Error('Invalid file type'))
+        }
+        cb(undefined, true)
+    }
+})
+router.post('/avatar', auth, upload.single('image'), async (req, res, next) => {
+    try {
+        if (!req.file) {
+            throw new Error('image file is required');
+        }
+        const imgbuffer = req.file.buffer;
+        let imageURL = await uploadImage(imgbuffer);
+        req.user.avatar = imageURL.url;
+        await req.user.save();
+        res.send({ success: true })
+    } catch (error) {
+        error.status = 400;
+        next(error);
+    }
+
 });
 
 module.exports = router;
