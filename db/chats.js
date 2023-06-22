@@ -7,6 +7,9 @@ const chatSchema = new Schema({
         required: true,
         trim: true,
     },
+    gptRes: {
+        type: String
+    },
     video_url: {
         type: String,
         trim: true,

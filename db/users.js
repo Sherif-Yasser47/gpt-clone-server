@@ -29,6 +29,10 @@ const userSchema = new Schema({
     avatar: {
         type: String,
         trim: true
+    },
+    credits: {
+        type: Number,
+        default: 200
     }
 }, {
     timestamps: true
@@ -38,7 +42,6 @@ const userSchema = new Schema({
 userSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password
-    delete user.otp
     return user;
 }
 

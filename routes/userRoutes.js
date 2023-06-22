@@ -1,10 +1,8 @@
 const router = require('express').Router();
-const multer = require('multer');
-const sharp = require('sharp');
 const auth = require('../middleware/auth');
 const User = require('../db/users');
 const sendOTPmail = require('../sendGrid/sendGrid');
-const { uploadAudio, uploadImage } = require('../d-id/uploadResources');
+// const { uploadAudio, uploadImage } = require('../d-id/uploadResources');
 
 router.post('/register', async (req, res, next) => {
     try {
@@ -52,33 +50,49 @@ router.post('/verify/:id', async (req, res, next) => {
     }
 });
 
-//User upload profile pic End-Point.
-const upload = multer({
-    limits: {
-        fileSize: 20000000
-    },
-    fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(png)$/i)) {
-            cb(new Error('Invalid file type'))
-        }
-        cb(undefined, true)
-    }
-})
-router.post('/avatar', auth, upload.single('image'), async (req, res, next) => {
+router.get('/avatars', auth, async (req, res, next) => {
     try {
-        if (!req.file) {
-            throw new Error('image file is required');
-        }
-        const imgbuffer = req.file.buffer;
-        let imageURL = await uploadImage(imgbuffer);
-        req.user.avatar = imageURL.url;
-        await req.user.save();
-        res.send({ success: true })
+        let staticAvatars = [
+            "https://create-images-results.d-id.com/DefaultPresenters/Toman_f_ai/image.jpeg",
+            "https://create-images-results.d-id.com/DefaultPresenters/Toma_f_ai/image.jpg",
+            "https://create-images-results.d-id.com/DefaultPresenters/Kanon_m_ai/image.jpeg",
+            "https://create-images-results.d-id.com/DefaultPresenters/Andrew_m_ai/image.jpg"
+        ]
+        res.send({ success: true, staticAvatars })
     } catch (error) {
         error.status = 400;
         next(error);
     }
 
 });
+
+//User upload profile pic End-Point.
+// const upload = multer({
+//     limits: {
+//         fileSize: 20000000
+//     },
+//     fileFilter(req, file, cb) {
+//         if (!file.originalname.match(/\.(png)$/i)) {
+//             cb(new Error('Invalid file type'))
+//         }
+//         cb(undefined, true)
+//     }
+// })
+// router.post('/avatar', auth, upload.single('image'), async (req, res, next) => {
+//     try {
+//         if (!req.file) {
+//             throw new Error('image file is required');
+//         }
+//         const imgbuffer = req.file.buffer;
+//         let imageURL = await uploadImage(imgbuffer);
+//         req.user.avatar = imageURL.url;
+//         await req.user.save();
+//         res.send({ success: true })
+//     } catch (error) {
+//         error.status = 400;
+//         next(error);
+//     }
+
+// });
 
 module.exports = router;
