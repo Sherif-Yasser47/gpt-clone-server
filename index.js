@@ -1,5 +1,5 @@
 const express = require('express');
-const https = require('https');
+const http = require('http');
 const cors = require('cors');
 const fs = require('fs');
 let logger = require('morgan');
@@ -7,12 +7,8 @@ let logger = require('morgan');
 const userRoutes = require('./routes/userRoutes');
 const gptRoutes = require('./routes/gptRoutes');
 
-const options = {
-    key: fs.readFileSync("server.key"),
-    cert: fs.readFileSync("server.cert"),
-};
 const app = express();
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 const port = process.env.PORT || 3001;
 require('./db/dbConnect');
 
