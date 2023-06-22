@@ -66,7 +66,7 @@ router.post('/video', auth, async (req, res, next) => {
 
         await chatMessage.save();
 
-        return res.status(200).send({ success: true });
+        return res.status(200).send({ success: true, talkId });
 
     } catch (error) {
         error.status = 400;
@@ -86,6 +86,15 @@ router.post('/video/webhook', async (req, res, next) => {
     } catch (error) {
         error.status = 400;
         next(error);
+    }
+});
+
+router.get('/video/:talkId', auth, async (req, res, next) => {
+    try {
+        const talk = await Chat.findOne({ user_id: req.user._id, talk_id: req.params.talkId })
+        return res.status(200).send({ success: true, video_url: talk.video_url });
+    } catch (error) {
+        next(error)
     }
 });
 
