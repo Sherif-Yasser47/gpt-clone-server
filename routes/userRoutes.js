@@ -6,7 +6,7 @@ const sendOTPmail = require('../sendGrid/sendGrid');
 
 router.post('/register', async (req, res, next) => {
     try {
-        await User.checkEmail(req.body.email);
+        // await User.checkEmail(req.body.email);
         const user = new User({ ...req.body });
         let otp = await user.generateOTP();
         await sendOTPmail(req.body.email, otp);
