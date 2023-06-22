@@ -8,7 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const gptRoutes = require('./routes/gptRoutes');
 
 const options = {
-    key: fs.readFileSync("server.pem"),
+    key: fs.readFileSync("server.key"),
     cert: fs.readFileSync("server.cert"),
 };
 const app = express();
