@@ -28,6 +28,9 @@ const reqOpenAI = async (prompt, model) => {
 
 router.post('/video', auth, async (req, res, next) => {
     try {
+        if (!req.body.input) {
+            throw new Error('input is missing');
+        }
         let model = (req.body.model == 3.5) ? 'text-davinci-003' : 'text-curie-001';
 
         const prompt = req.body.input;
